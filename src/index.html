@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="assets/css/output.css">
+  <link rel="stylesheet" href="assets/css/sticky-note.css">
+  <link rel="stylesheet" href="assets/css/modal.css">
+  <title>Sticky Note</title>
+</head>
+<body>
+  <div id="front-screen" class="centered">
+    <button id="create-note" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hidden fixed top-0 left-0">
+      note
+    </button>
+    <button id="create-headline" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hidden fixed top-0 left-20">
+      headline
+    </button>
+    <select id="sqlite-table-picker">
+    </select>
+    <button id="load" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      Load
+    </button>
+    <button id="new" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      New
+    </button>
+    <button id="save" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hidden">
+      Save
+    </button>
+  </div>
+  <div id = "board" class="hidden">
+      <div id="sticky-object-container"></div>
+  </div>
+  <script type="module" src="dist/index.js"></script>
+</body>
+</html>

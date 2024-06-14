@@ -1,0 +1,51 @@
+.sticky-note {
+    min-width: 200px; /* 最小幅 */
+    min-height: 200px; /* 最小高さ */
+    border: 1px solid #ccc; /* 境界線を設定 */
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.2); /* 影をつける */
+  }
+
+
+
+  #front-screen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+  }
+  
+  .resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 20px 20px 0 0;
+    border-color: transparent  #e4df83  transparent  transparent;
+    cursor: nwse-resize;
+  }
+  
+  .text-sm {
+    padding: 20px;
+    position: absolute;
+    width: calc(100% - 30px);
+    height: calc(100% - 65px);
+    top:45px;
+    font-size: 30px;
+    font-family: 'Roboto', sans-serif;
+    line-height: 50px;
+  }
+
+
+  .move-handle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: move;
+    width: 100%;
+    height: 45px;
+    background-color: rgba(255, 255, 255, 0.3); 
+    border-bottom: 1px solid #ccc; 
+}
