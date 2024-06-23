@@ -1,7 +1,7 @@
 
 use diesel::result::Error;
 use crate::dal::{board::get_board_id, board_object::BoardObject, board_object_model::{headline::Headline, sticky_note::StickyNote}};
-use crate::dal::board_object::DBNAME;
+use crate::dal::board_object::get_database_path;
 
 pub struct IdManager {
     current_id: i64
@@ -12,8 +12,9 @@ pub struct IdManager {
       Ok(IdManager {current_id: 0})
     }
     pub fn change_table(&mut self, table_name: &str) -> Result<(), Error>{
-      let board_id = get_board_id(DBNAME, table_name)?;
-      let max_id = StickyNote::get_max_object_id_on_board(DBNAME, board_id) as i64;
+      let db_name = get_database_path();
+      let board_id = get_board_id(&db_name, table_name)?;
+      let max_id = StickyNote::get_max_object_id_on_board(&db_name, board_id) as i64;
       self.current_id = max_id;
       Ok(())
     }
@@ -32,8 +33,9 @@ pub struct HeadlineIdManager {
       Ok(HeadlineIdManager {current_id: 0})
     }
     pub fn change_table(&mut self, table_name: &str) -> Result<(), Error>{
-      let board_id = get_board_id(DBNAME, table_name)?;
-      let max_id = Headline::get_max_object_id_on_board(DBNAME, board_id) as i64;
+      let db_name = get_database_path();
+      let board_id = get_board_id(&db_name, table_name)?;
+      let max_id = Headline::get_max_object_id_on_board(&db_name, board_id) as i64;
       self.current_id = max_id;
       Ok(())
     }

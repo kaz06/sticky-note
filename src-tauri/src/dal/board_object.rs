@@ -3,7 +3,20 @@ use diesel::{result::Error, Connection, SqliteConnection};
 
 use crate::dal::board_object_model::{headline::Headline, sticky_note::StickyNote};
 
-pub const DBNAME: &str = "./src/dal/db/file/sticky_note.sqlite";
+
+use std::fs;
+use tauri::api::path::data_dir;
+
+pub fn get_database_path() -> String {
+    let app_dir = data_dir().ok_or("Could not determine app directory").unwrap();
+    let db_path = app_dir.join("database.sqlite");
+    if !db_path.parent().unwrap().exists() {
+        let _ = fs::create_dir_all(db_path.parent().unwrap());
+    }
+    db_path.to_string_lossy().to_string()
+}
+
+
 pub trait BoardObject {
     const OBJECT_TYPE: ObjectType ;
 
@@ -34,9 +47,11 @@ impl ObjectType {
 
 pub fn create_db_tables() -> Result<usize, Error> {
     use crate::dal::db::connection::*;
-    let mut conn = SqliteConnection::establish(DBNAME).unwrap();
+    let binding = get_database_path();
+    let db_name = binding.as_str();
+    let mut conn = SqliteConnection::establish(db_name).unwrap();
     let _ = create_board_object_table_if_not_exists(&mut conn);
-    let _ = StickyNote::create_table_if_not_exists(DBNAME);
-    let _ = Headline::create_table_if_not_exists(DBNAME);
+    let _ = StickyNote::create_table_if_not_exists(db_name);
+    let _ = Headline::create_table_if_not_exists(db_name);
     create_board_table_if_not_exists(&mut conn)
 }

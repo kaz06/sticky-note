@@ -7,7 +7,8 @@ use crate::commands::models::{IdManager, BoradNames};
 use crate::dal::board_object::BoardObject;
 use crate::dal::board_object_model::headline::Headline;
 use crate::dal::board_object_model::sticky_note::StickyNote;
-use crate::dal::board_object::DBNAME;
+use crate::dal::board_object::get_database_path;
+
 
 use super::models::HeadlineIdManager;
 
@@ -35,7 +36,8 @@ pub fn save_note_info_command(
   memo: String) -> String {
     let binding = db_board_name.lock().unwrap();
     let board_name = &binding.board_name;
-    let board_id = get_board_id(DBNAME, board_name).unwrap();
+    let db_name = get_database_path();
+    let board_id = get_board_id(&db_name, board_name).unwrap();
     let sticky_note = StickyNote {
       id: id.parse::<i32>().unwrap(),
       board_id,
@@ -45,8 +47,8 @@ pub fn save_note_info_command(
       height,
       memo: Some(memo),
     };
-
-    match sticky_note.save(DBNAME){
+    let db_name = get_database_path();
+    match sticky_note.save(&db_name){
       Ok(_) => "success".to_string(),
       Err(e) => format!("error: {}", e)
     }
@@ -63,7 +65,8 @@ pub fn save_headline_info_command(
   headline: String) -> String {
     let binding = db_board_name.lock().unwrap();
     let board_name = &binding.board_name;
-    let board_id = get_board_id(DBNAME, board_name).unwrap();
+    let db_name = get_database_path();
+    let board_id = get_board_id(&db_name, board_name).unwrap();
     let head_line = Headline {
       id: id.parse::<i32>().unwrap(),
       board_id,
@@ -74,7 +77,8 @@ pub fn save_headline_info_command(
       headline: Some(headline),
     };
 
-    match head_line.save(DBNAME){
+    let db_name = get_database_path();
+    match head_line.save(&db_name){
       Ok(_) => "success".to_string(),
       Err(e) => format!("error: {}", e)
     }
@@ -85,8 +89,10 @@ pub fn save_headline_info_command(
 pub fn get_note_info_command(db_board_name: State<'_, Mutex<BoradNames>> , id: i32) -> StickyNote {
   let binding = db_board_name.lock().unwrap();
   let board_name = &binding.board_name;
-  let board_id = get_board_id(DBNAME, board_name).unwrap();
-  let result = StickyNote::get(DBNAME, board_id, id);
+  let db_name = get_database_path();
+  let board_id = get_board_id(&db_name, board_name).unwrap();
+  let db_name = get_database_path();
+  let result = StickyNote::get(&db_name, board_id, id);
   match result {
     Ok(sticky_note) => {
       sticky_note
@@ -100,8 +106,9 @@ pub fn get_note_info_command(db_board_name: State<'_, Mutex<BoradNames>> , id: i
 pub fn get_headline_info_command(db_board_name: State<'_, Mutex<BoradNames>> , id: i32) -> Headline {
   let binding = db_board_name.lock().unwrap();
   let board_name = &binding.board_name;
-  let board_id = get_board_id(DBNAME, board_name).unwrap();
-  let result = Headline::get(DBNAME, board_id, id);
+  let db_name = get_database_path();
+  let board_id = get_board_id(&db_name, board_name).unwrap();
+  let result = Headline::get(&db_name, board_id, id);
   match result {
     Ok(sticky_note) => {
       sticky_note
@@ -114,8 +121,9 @@ pub fn get_headline_info_command(db_board_name: State<'_, Mutex<BoradNames>> , i
 pub fn delete_note_command(db_board_name: State<'_, Mutex<BoradNames>> , id: i32) -> String {
   let binding = db_board_name.lock().unwrap();
   let board_name = &binding.board_name;
-  let board_id = get_board_id(DBNAME, board_name).unwrap();
-  match StickyNote::delete(DBNAME, board_id, id) {
+  let db_name = get_database_path();
+  let board_id = get_board_id(&db_name, board_name).unwrap();
+  match StickyNote::delete(&db_name, board_id, id) {
     Ok(_) => "success".to_string(),
     Err(e) => format!("error: {}", e)
   }
@@ -125,9 +133,10 @@ pub fn delete_note_command(db_board_name: State<'_, Mutex<BoradNames>> , id: i32
 pub fn delete_headline_command(db_board_name: State<'_, Mutex<BoradNames>> , id: i32) -> String {
   let binding = db_board_name.lock().unwrap();
   let board_name = &binding.board_name;
-  let board_id = get_board_id(DBNAME, board_name).unwrap();
+  let db_name = get_database_path();
+  let board_id = get_board_id(&db_name, board_name).unwrap();
   
-  match Headline::delete(DBNAME, board_id, id) {
+  match Headline::delete(&db_name, board_id, id) {
     Ok(_) => "success".to_string(),
     Err(e) => format!("error: {}", e)
   }
@@ -135,7 +144,8 @@ pub fn delete_headline_command(db_board_name: State<'_, Mutex<BoradNames>> , id:
 
 #[command]
 pub fn create_screen_command(board: String) -> String {
-  match create_board(DBNAME, &board) {
+  let db_name = get_database_path();
+  match create_board(&db_name, &board) {
     Ok(_) => "success".to_string(),
     Err(e) => format!("error: {}", e)
   }
@@ -143,7 +153,8 @@ pub fn create_screen_command(board: String) -> String {
 
 #[command]
 pub fn list_screens_command() -> Vec<String>{
-  list_screen(DBNAME)
+  let db_name = get_database_path();
+  list_screen(&db_name)
 }
 
 
@@ -155,8 +166,9 @@ pub fn load_notes_from_screen_command(
   let _ = db_board_name.lock().unwrap().change_table(board);
   let binding = db_board_name.lock().unwrap();
   let board_name = &binding.board_name;
-  let board_id = get_board_id(DBNAME, board_name).unwrap();
-  let result = StickyNote::get_all_in_board(DBNAME, board_id);
+  let db_name = get_database_path();
+  let board_id = get_board_id(&db_name, board_name).unwrap();
+  let result = StickyNote::get_all_in_board(&db_name, board_id);
   match result {
     Ok(sticky_notes) => sticky_notes,
     Err(e) => panic!("Error: {}", e)
@@ -170,8 +182,9 @@ pub fn load_headlines_from_screen_command(
   let _ = db_board_name.lock().unwrap().change_table(board);
   let binding = db_board_name.lock().unwrap();
   let board_name = &binding.board_name;
-  let board_id = get_board_id(DBNAME, board_name).unwrap();
-  let result = Headline::get_all_in_board(DBNAME, board_id);
+  let db_name = get_database_path();
+  let board_id = get_board_id(&db_name, board_name).unwrap();
+  let result = Headline::get_all_in_board(&db_name, board_id);
   match result {
     Ok(headline) => headline,
     Err(e) => panic!("Error: {}", e)
@@ -180,7 +193,8 @@ pub fn load_headlines_from_screen_command(
 
 #[command]
 pub fn is_board_name_exist_command(board: &str) -> bool {
-  let result = get_board_id(DBNAME, board);
+  let db_name = get_database_path();
+  let result = get_board_id(&db_name, board);
   result.is_ok()
 }
 
