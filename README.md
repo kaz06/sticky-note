@@ -19,7 +19,13 @@ To get started with  Sticky Note, follow these steps:
     ```bash
     npm install
     ```
-2. Start Sticky Note:
+2. Start Sticky Note:  
+    Install the Tauri CLI if necessary  
+    ```bash
+    cargo install tauri-cli
+    ```
+    This example uses version 1.5.11, but other versions may require configuration adjustments or other changes.
+
     ```bash
     cargo tauri dev --no-watch
     ```
