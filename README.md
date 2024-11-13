@@ -31,6 +31,12 @@ To get started with  Sticky Note, follow these steps:
     ```
 
 
+## create installer
+    
+```bash
+cargo tauri build
+```
+
 ## License
 
 This project is licensed under the MIT License. 
